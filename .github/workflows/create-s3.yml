@@ -1,14 +1,14 @@
 name: Create S3 Bucket
 
 on:
-  workflow_dispatch:  # Manual trigger from Actions tab
+  workflow_dispatch:  # Allows manual trigger from GitHub UI
 
 jobs:
-  create-bucket:
+  create-s3-bucket:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Configure AWS credentials
@@ -16,14 +16,13 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Create S3 Bucket
         env:
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          BUCKET_NAME=my-gh-action-bucket-123456
-          aws s3api create-bucket \
-          --bucket $BUCKET_NAME \
-          --region $AWS_REGION \
-          --create-bucket-configuration LocationConstraint=$AWS_REGION
+          # Use a unique bucket name (you can customize the prefix)
+          BUCKET_NAME="gh-actions-bucket-${{ github.run_id }}"
+
+          echo "Creating S3 bucket: $BUCKET_NAME in region $AWS_REGION"
