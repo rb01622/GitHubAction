@@ -19,9 +19,11 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
 
       - name: Create S3 Bucket
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
           BUCKET_NAME=my-gh-action-bucket-123456
           aws s3api create-bucket \
-            --bucket $BUCKET_NAME \
-            --region ${{ secrets.AWS_REGION || 'us-east-1' }} \
-            --create-bucket-configuration LocationConstraint=${{ secrets.AWS_REGION || 'us-east-1' }}
+          --bucket $BUCKET_NAME \
+          --region $AWS_REGION \
+          --create-bucket-configuration LocationConstraint=$AWS_REGION
